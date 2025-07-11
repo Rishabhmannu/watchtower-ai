@@ -8,6 +8,19 @@ from .service_models import (
     CategorySummary,
     ServiceRegistry
 )
+from .dashboard_models import (
+    PanelType,
+    ThresholdMode,
+    ThresholdStep,
+    Threshold,
+    Target,
+    GridPos,
+    DashboardPanel,
+    DashboardRow,
+    Dashboard,
+    DashboardSummary,
+    PanelSummary
+)
 
 __all__ = [
     "ServiceCategory",
@@ -16,5 +29,16 @@ __all__ = [
     "ServiceHealth",
     "ServiceMetrics",
     "CategorySummary",
-    "ServiceRegistry"
+    "ServiceRegistry",
+    "PanelType",
+    "ThresholdMode",
+    "ThresholdStep",
+    "Threshold",
+    "Target",
+    "GridPos",
+    "DashboardPanel",
+    "DashboardRow",
+    "Dashboard",
+    "DashboardSummary",
+    "PanelSummary"
 ]

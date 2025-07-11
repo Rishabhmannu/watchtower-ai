@@ -42,8 +42,17 @@ export function useWebSocket() {
       const ws = new WebSocket('ws://localhost:5050/ws');
       websocketRef.current = ws;
 
+      // Add connection timeout
+      const timeout = setTimeout(() => {
+        if (ws.readyState === WebSocket.CONNECTING) {
+          ws.close();
+          console.log('WebSocket connection timeout');
+        }
+      }, 5000);
+
       ws.onopen = () => {
         console.log('WebSocket connected');
+        clearTimeout(timeout);  // ← Add this
         setIsConnected(true);
         reconnectAttempts.current = 0;
       };
@@ -77,7 +86,7 @@ export function useWebSocket() {
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error('WebSocket connection error - likely backend connection issue');
         setIsConnected(false);
       };
 

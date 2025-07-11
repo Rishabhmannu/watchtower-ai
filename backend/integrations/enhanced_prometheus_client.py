@@ -341,6 +341,25 @@ class EnhancedPrometheusClient:
         
         return templates
 
+    async def query_metric(self, query: str) -> Dict[str, Any]:
+        """Simple query method that returns a dictionary for API compatibility"""
+        result = await self.query_metric_with_retry(query)
+        
+        if result.success:
+            return {
+                "status": "success",
+                "data": result.data,
+                "timestamp": result.timestamp.isoformat(),
+                "execution_time_ms": result.execution_time_ms
+            }
+        else:
+            return {
+                "status": "error",
+                "error": result.error_message,
+                "timestamp": result.timestamp.isoformat(),
+                "execution_time_ms": result.execution_time_ms
+            }
+
     async def query_metric_with_retry(self, query: str) -> QueryResult:
         """Query Prometheus with retry logic and enhanced error handling"""
         start_time = time.time()
@@ -665,6 +684,22 @@ class EnhancedPrometheusClient:
                 return "warning"
             else:
                 return "healthy"
+
+    async def check_prometheus_connection(self) -> bool:
+        """Check if Prometheus is accessible"""
+        try:
+            session = await self._get_session()
+            url = f"{self.base_url}/api/v1/query"
+            params = {"query": "up"}
+            
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return data.get("status") == "success"
+                return False
+        except Exception as e:
+            logger.error(f"Prometheus connection check failed: {e}")
+            return False
 
     async def clear_cache(self):
         """Clear the metric cache"""
